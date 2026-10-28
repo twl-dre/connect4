@@ -3,21 +3,28 @@ import math
 
 def check_move(board, turn, col, pop):
     c = 7
-    r = int(len(board)/c)
+    r = int((len(board) + 1)/c)
     if pop == True:
-        if board[col] == turn: return True 
+        if board[col] == turn: return True
         else: return False
-    elif board[(r * c) - r + col] == 0: return True
+    elif board[(r * c) - c + col] == 0: return True
     else: return False
 
 def apply_move(board, turn, col, pop):
     c = 7
     r = int(len(board)/c)
     if check_move(board, turn, col, pop):
-        for i in range(r - 1):
-            index = i * c + col
-            board[index] = turn
-            return board.copy()
+        if pop == True:
+            for i in range(r - 1):
+                index = i * c + col
+            board[index] = board[index + c]
+        else:
+            for i in range(r - 1):
+                index = i * c + col
+                if board[index] == 0:
+                    board_updated = board.copy()
+                    board_updated[index] == turn
+                    return board_updated
 
 def check_victory(board, who_played):
     who_played = 0
