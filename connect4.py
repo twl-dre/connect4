@@ -62,7 +62,7 @@ def check_victory(board, who_played):
     
 
 def computer_move(board, turn, level):
-    # implement your function here
+    #
     return (0,False)
     
 def display_board(board):
@@ -89,6 +89,15 @@ def menu():
     while game_over == False:
         display_board(board)
         while True:
+            pop_user = str(input("Pop or add? (p: pop a: add) "))
+            if pop_user == "p": 
+                pop = True
+                break
+            elif pop_user == "a": 
+                pop = False
+                break
+            else: print("Invalid input!" )
+        while True:
             try:
                 col = int(input("Enter a column number! (1-7) ")) - 1
                 if not col in range(c):
@@ -104,8 +113,7 @@ def menu():
             else: 
                 turn = 1
                 who_played = 2
-        else: 
-            print("Invalid input!")
+        else: print("Invalid input!")
         if check_victory(board, who_played) == 1: 
             display_board(board)
             print("Player 1 wins!")
