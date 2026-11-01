@@ -71,8 +71,21 @@ def computer_move(board, turn, level):
             if check_move(board, turn, col, pop): return (col, pop)
             else: continue
     elif level == 2:
-        #In Progress
-        pass
+        while True:
+            if turn == 1: turn_after = 2
+            else: turn_after = 1
+            for i in range(c):
+                board_temporary = apply_move(board, turn, i, False)
+                if check_victory(board_temporary, turn) == turn:
+                    return(i, False)
+            for i in range(c):
+                board_temporary = apply_move(board, turn_after, i, False)
+                if check_victory(board_temporary, turn_after) == turn_after:
+                    return (i, False)
+            else:
+                col = random.randint(0, c - 1)
+                pop = random.choice((True, False))
+                if check_move(board, turn, col, pop): return (col, pop)
     
 def display_board(board):
     c = 7
@@ -92,11 +105,31 @@ def menu():
         except ValueError: print("Invalid input! Enter a positive integer!")
     while True:
         player1 = input("Player 1! Human or computer? (h: human c: computer) ")
-        if player1 == "h" or player1 == "c": break
+        if player1 == "h": break
+        elif player1 == "c":
+            while True:
+                try:
+                    level1 = int(input("Pick a level for Player 1! (1: Easy 2: Medium) "))
+                    if not level1 in range(1, 3):
+                        print("Invalid input! Enter a positive integer!")
+                        continue
+                    break
+                except ValueError: print("Invalid input! Enter either '1' or '2'!")
+            break
         else: print("Invalid input!") 
     while True:
         player2 = input("Player 2! Human or computer? (h: human c: computer) ")
-        if player2 == "h" or player2 == "c": break
+        if player2 == "h": break 
+        elif player2 == "c":
+            while True:
+                try:
+                    level2 = int(input("Pick a level for Player 2! (1: Easy 2: Medium) "))
+                    if not level2 in range(1, 3):
+                        print("Invalid input! Enter a positive integer!")
+                        continue
+                    break
+                except ValueError: print("Invalid input! Enter either '1' or '2'!")
+            break
         else: print("Invalid input!")
     c = 7
     board = [0] * r * c
@@ -104,11 +137,16 @@ def menu():
     who_played = 1
     col = None
     pop = False
-    game_over = False
-    while game_over == False:
+    while check_victory(board, who_played) == 0:
         display_board(board)
         print("Player ", turn, "'s turn", sep="")
-        while True:
+        if (player1, turn) == ("c", 1):
+            level = level1
+            col, pop = computer_move(board, turn, level)
+        elif (player2, turn) == ("c", 2):
+            level = level2
+            col, pop = computer_move(board, turn, level)
+        while (player1, turn) == ("h", 1) or (player2, turn) == ("h", 2):
             pop_user = str(input("Pop or add? (p: pop a: add) "))
             if pop_user == "p": 
                 pop = True
@@ -141,11 +179,9 @@ def menu():
         if check_victory(board, who_played) == 1: 
             display_board(board)
             print("Player 1 wins!")
-            game_over = True
         elif check_victory(board, who_played) == 2:
             display_board(board)
             print("Player 2 wins!")
-            game_over = True
     pass
 
 if __name__ == "__main__": 
