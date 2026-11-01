@@ -1,5 +1,6 @@
 import random
 import math
+import numpy as np
 
 def check_move(board, turn, col, pop):
     c = 7
@@ -62,11 +63,21 @@ def check_victory(board, who_played):
     
 
 def computer_move(board, turn, level):
-    #
-    return (0,False)
+    c = 7
+    if level == 1:
+        while True:
+            col = random.randint(0, c - 1)
+            pop = random.choice((True, False))
+            if check_move(board, turn, col, pop): return (col, pop)
+            else: continue
+    elif level == 2:
+        #In Progress
+        pass
     
 def display_board(board):
-    print(board)
+    c = 7
+    r = int(len(board)/c)
+    print(np.fliplr(np.array(board[::-1]).reshape(r, c)))
     pass
 
 def menu():
@@ -79,6 +90,14 @@ def menu():
                 continue
             break
         except ValueError: print("Invalid input! Enter a positive integer!")
+    while True:
+        player1 = input("Player 1! Human or computer? (h: human c: computer) ")
+        if player1 == "h" or player1 == "c": break
+        else: print("Invalid input!") 
+    while True:
+        player2 = input("Player 2! Human or computer? (h: human c: computer) ")
+        if player2 == "h" or player2 == "c": break
+        else: print("Invalid input!")
     c = 7
     board = [0] * r * c
     turn = 1
@@ -88,32 +107,37 @@ def menu():
     game_over = False
     while game_over == False:
         display_board(board)
+        print("Player ", turn, "'s turn", sep="")
         while True:
             pop_user = str(input("Pop or add? (p: pop a: add) "))
             if pop_user == "p": 
                 pop = True
-                break
             elif pop_user == "a": 
                 pop = False
-                break
-            else: print("Invalid input!" )
-        while True:
+            else: 
+                print("Invalid input!")
+                continue
             try:
                 col = int(input("Enter a column number! (1-7) ")) - 1
                 if not col in range(c):
-                    print("Invalid input!")
+                    print("Invalid input! Enter an integer from 1 to 7 (inclusive)!")
+                    continue
+                elif not check_move(board, turn, col, pop):
+                    if pop == True:
+                        if board[col] == 0: print("No piece to pop on that column! Try another column!")
+                        else: print("The bottom piece cannot be popped because it's not your piece! Try another column!")
+                    else:
+                        print("Column full! Try another column!")    
                     continue
                 break
-            except ValueError: print("Invalid input! Enter an integer from 1 to 7 (inclusive)!")
-        if check_move(board, turn, col, pop):
-            board = apply_move(board, turn, col, pop)
-            if turn == 1: 
-                turn = 2
-                who_played = 1
-            else: 
-                turn = 1
-                who_played = 2
-        else: print("Invalid input!")
+            except ValueError: print("Invalid input! Enter an integer!")
+        board = apply_move(board, turn, col, pop)
+        if turn == 1: 
+            turn = 2
+            who_played = 1
+        else: 
+            turn = 1
+            who_played = 2
         if check_victory(board, who_played) == 1: 
             display_board(board)
             print("Player 1 wins!")
